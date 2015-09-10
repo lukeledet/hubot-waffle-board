@@ -32,8 +32,9 @@ module.exports = function(robot) {
   }
 
   function issueToString(issue) {
-    var labels = _.map(issue.labels, function(label) { return '#' + label.name; }).sort();
-    return "#" + issue.number + ' - ' + issue.title + ' ' + labels.join(' ');
+    var labels = _.reject(issue.labels, function(label) { return label == wipLabel });
+    var hashtags = _.map(labels, function(label) { return '#' + label.name; }).sort().join(' ');
+    return "#" + issue.number + ' - ' + issue.title + ' ' + hashtags;
   }
 
   // see https://developer.github.com/v3/issues/#list-issues
