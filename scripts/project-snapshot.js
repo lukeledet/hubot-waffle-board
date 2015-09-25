@@ -90,7 +90,7 @@ module.exports = function(robot) {
     (workflowLabels || '').split(',').forEach(function(label) {
       queryParts.push('-label:"' + label + '"');
     });
-    github.get('/repos/' + orgProject + '/search/issues?sort=created&order=asc&q=' + queryParts.join(' '), function(results) {
+    github.get('/search/issues?sort=created&order=asc&q=' + queryParts.join(' '), function(results) {
       var issues = results.items;
       if (issues.length === 0) {
         msg.send('No new issues in the inbox for ' + orgProject);
