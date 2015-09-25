@@ -9,9 +9,10 @@
 //   HUBOT_GITHUB_TOKEN=your github auth token
 //   HUBOT_GITHUB_USER=default organization for github projects
 //   HUBOT_GITHUB_WIP_LABEL=name of label for work in progress tickets
+//   HUBOT_GITHUB_WORKFLOW_LABELS=comma separated list of labels used for workflow (ex: Backlog, In Progress)
 //
 // Commands:
-//  Hubot snapshot <user_or_organization>/<project> - query for recent project activity
+//   Hubot snapshot <user_or_organization>/<project> - query for recent project activity
 //
 // Author:
 //   Ryan Sonnek
@@ -19,6 +20,7 @@
 var githubAuthToken = process.env.HUBOT_GITHUB_TOKEN;
 var defaultGithubOrganization = process.env.HUBOT_GITHUB_USER;
 var wipLabel = process.env.HUBOT_GITHUB_WIP_LABEL;
+var workflowLabels = process.env.HUBOT_GITHUB_WORKFLOW_LABELS;
 
 module.exports = function(robot) {
   var github = require('githubot')(robot);
@@ -73,6 +75,30 @@ module.exports = function(robot) {
           message += "\n* " + issueToString(issue);
         });
         msg.send(message);
+      }
+    });
+  }
+
+  // see https://developer.github.com/v3/search/#search-issues
+  // example query: -label:"2 - Working" -label:"1 - Ready" -label:"0 - Backlog" repo:betterup/myproject is:open type:issue
+  function inboxIssues(orgProject, msg) {
+    var queryParts = [
+      'type:issue',
+      'is:open'
+    ];
+    queryParts.push('repo:' + orgProject);
+    (workflowLabels || '').split(',').forEach(function(label) {
+      queryParts.push('-label:"' + label + '"');
+    });
+    github.get('/repos/' + orgProject + '/search/issues?sort=created&order=asc&q=' + queryParts.join(' '), function(results) {
+      var issues = results.items;
+      if (issues.length === 0) {
+        msg.send('No new issues in the inbox for ' + orgProject);
+      } else {
+        var message = 'These are new issues in the inbox for ' + orgProject + ':';
+        issues.forEach(function(issue) {
+          message += "\n* " + issueToString(issue);
+        });
       }
     });
   }
