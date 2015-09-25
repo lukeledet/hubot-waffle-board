@@ -99,6 +99,7 @@ module.exports = function(robot) {
         issues.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
+        msg.send(message);
       }
     });
   }
