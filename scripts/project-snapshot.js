@@ -128,6 +128,7 @@ module.exports = function(robot) {
     recentClosedIssuesReport(orgProject, msg);
     inProgressReport(orgProject, msg);
     openPullRequests(orgProject, msg);
+    inboxIssues(orgProject, msg);
   };
 
   robot.respond(/snapshot (\S+)/i, snapshotHandler);
