@@ -32,7 +32,7 @@ module.exports = function(robot) {
   }
 
   function issueToString(issue) {
-    var labels = _.reject(issue.labels, function(label) { return label == wipLabel });
+    var labels = _.reject(issue.labels, function(label) { return label.name == wipLabel });
     var hashtags = _.map(labels, function(label) { return '#' + label.name; }).sort().join(' ');
     return "#" + issue.number + ' - ' + issue.title + ' ' + hashtags;
   }
