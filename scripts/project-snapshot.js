@@ -37,7 +37,7 @@ module.exports = function(robot) {
     var labels = _.reject(issue.labels, function(label) { return label.name == wipLabel });
     var hashtags = _.map(labels, function(label) { return '#' + label.name; }).sort().join(' ');
     var owner = issue.assignee || issue.user;
-    return "#" + issue.number + ' - @' + owner + ' ' + issue.title + ' ' + hashtags;
+    return "#" + issue.number + ' - @' + owner.login + ' ' + issue.title + ' ' + hashtags;
   }
 
   // see https://developer.github.com/v3/issues/#list-issues
