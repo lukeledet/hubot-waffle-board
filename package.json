@@ -1,6 +1,6 @@
 {
   "name": "hubot-project-snapshot",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Hubot plugin for daily progress reports",
   "main": "index.js",
   "scripts": {
