@@ -26,6 +26,7 @@ var workflowLabels = process.env.HUBOT_GITHUB_WORKFLOW_LABELS;
 module.exports = function(robot) {
   var github = require('githubot')(robot);
   var _ = require('underscore');
+  var moment = require('moment');
 
   function rejectPullRequests(issues) {
     var issuesWithoutPullRequests = _.filter(issues, function(issue) {
@@ -34,11 +35,23 @@ module.exports = function(robot) {
     return issuesWithoutPullRequests;
   }
 
+  // see https://developer.github.com/v3/issues/#list-issues
   function issueToString(issue) {
     var labels = _.reject(issue.labels, function(label) { return label.name == wipLabel });
     var hashtags = _.map(labels, function(label) { return '#' + label.name; }).sort().join(' ');
+    var lastUpdatedAt = moment(issue.closed_at || issue.updated_at);
+    var daysSinceUpdated = moment().diff(lastUpdatedAt, 'days');
     var owner = issue.assignee || issue.user;
-    return "#" + issue.number + ' - @' + owner.login + ' ' + issue.title + ' ' + hashtags;
+
+    var parts = [];
+    parts.push('#' + issue.number);
+    if (daysSinceUpdated > 0) {
+      parts.push('[' + daysSinceUpdated + 'd]');
+    }
+    parts.push('@' + owner.login);
+    parts.push(issue.title);
+    parts.push(hashtags);
+    return parts.join(' ');
   }
 
   // see https://developer.github.com/v3/issues/#list-issues
