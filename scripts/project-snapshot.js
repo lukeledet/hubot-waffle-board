@@ -13,6 +13,7 @@
 //
 // Commands:
 //   Hubot snapshot <user_or_organization>/<project> - query for recent project activity
+//   Hubot snapshot <project> - query for recent project activity w/ default organization
 //
 // Author:
 //   Ryan Sonnek
@@ -41,17 +42,17 @@ module.exports = function(robot) {
   }
 
   // see https://developer.github.com/v3/issues/#list-issues
-  function inProgressReport(orgProject, msg) {
+  function inProgressReport(orgProject, callback) {
     github.get('/repos/' + orgProject + '/issues?filter=all&labels=' + wipLabel + '&sort=updated&direction=asc', function(issues) {
       var issuesWithoutPullRequests = rejectPullRequests(issues);
       if (issuesWithoutPullRequests.length === 0) {
-        msg.send('No issues currently in progress for ' + orgProject);
+        callback('No issues currently in progress for ' + orgProject);
       } else {
         var message = 'These issues are currently in progress for ' + orgProject + ':';
         issuesWithoutPullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
-        msg.send(message);
+        callback(message);
       }
     });
   }
@@ -65,24 +66,24 @@ module.exports = function(robot) {
 
   // list recently closed issues (in the past week)
   // see https://developer.github.com/v3/issues/#list-issues
-  function recentClosedIssuesReport(orgProject, msg) {
+  function recentClosedIssuesReport(orgProject, callback) {
     github.get('/repos/' + orgProject + '/issues?filter=all&state=closed&sort=updated&direction=desc&per_page=10&since=' + lastWeek().toISOString(), function(issues) {
       var issuesWithoutPullRequests = rejectPullRequests(issues);
       if (issuesWithoutPullRequests.length === 0) {
-        msg.send('No recently closed issues for ' + orgProject);
+        callback('No recently closed issues for ' + orgProject);
       } else {
         var message = 'These issues were recently closed for ' + orgProject + ':';
         issuesWithoutPullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
-        msg.send(message);
+        callback(message);
       }
     });
   }
 
   // see https://developer.github.com/v3/search/#search-issues
   // example query: -label:"2 - Working" -label:"1 - Ready" -label:"0 - Backlog" repo:betterup/myproject is:open type:issue
-  function inboxIssues(orgProject, msg) {
+  function inboxIssues(orgProject, callback) {
     var queryParts = [
       'type:issue',
       'is:open'
@@ -94,28 +95,28 @@ module.exports = function(robot) {
     github.get('/search/issues?sort=created&order=asc&q=' + queryParts.join(' '), function(results) {
       var issues = results.items;
       if (issues.length === 0) {
-        msg.send('No new issues in the inbox for ' + orgProject);
+        callback('No new issues in the inbox for ' + orgProject);
       } else {
         var message = 'These are new issues in the inbox for ' + orgProject + ':';
         issues.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
-        msg.send(message);
+        callback(message);
       }
     });
   }
 
   // see https://developer.github.com/v3/pulls/#list-pull-requests
-  function openPullRequests(orgProject, msg) {
+  function openPullRequests(orgProject, callback) {
     github.get('/repos/' + orgProject + '/pulls?sort=updated&direction=asc', function(pullRequests) {
       if (pullRequests.length === 0) {
-        msg.send('No open pull requests for ' + orgProject);
+        callback('No open pull requests for ' + orgProject);
       } else {
         var message = 'Open pull requests for ' + orgProject + ':';
         pullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
-        msg.send(message);
+        callback(message);
       }
     });
   }
@@ -127,10 +128,18 @@ module.exports = function(robot) {
 
     var orgProject = organization + '/' + project;
     msg.send('Generating project snapshot for ' + orgProject + '...');
-    recentClosedIssuesReport(orgProject, msg);
-    inProgressReport(orgProject, msg);
-    openPullRequests(orgProject, msg);
-    inboxIssues(orgProject, msg);
+    recentClosedIssuesReport(orgProject, function(closedIssuesMessage) {
+      msg.send(closedIssuesMessage);
+      openPullRequests(orgProject, function(pullRequestsMessage) {
+        msg.send(pullRequestsMessage);
+        inProgressReport(orgProject, function(inProgressMessage) {
+          msg.send(inProgressMessage);
+          inboxIssues(orgProject, function(inboxMessage) {
+            msg.send(inboxMessage);
+          });
+        });
+      });
+    });
   };
 
   robot.respond(/snapshot (\S+)/i, snapshotHandler);
