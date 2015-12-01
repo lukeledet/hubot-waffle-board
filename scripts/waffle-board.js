@@ -12,8 +12,9 @@
 //   HUBOT_GITHUB_WORKFLOW_LABELS=comma separated list of labels used for workflow (ex: Backlog, In Progress)
 //
 // Commands:
-//   Hubot snapshot <user_or_organization>/<project> - query for recent project activity
-//   Hubot snapshot <project> - query for recent project activity w/ default organization
+//   Hubot waffle board <user_or_organization>/<project> - query for recent project activity
+//   Hubot waffle board <project> - query for recent project activity w/ default organization
+//   Hubot waffle board <project> - query for recent project activity w/ default organization
 //
 // Author:
 //   Ryan Sonnek
@@ -134,13 +135,14 @@ module.exports = function(robot) {
     });
   }
 
-  var snapshotHandler = function(msg) {
+  var handler = function(msg) {
     var projectWithOrganization = msg.match[1].split('/');
     var organization = projectWithOrganization[projectWithOrganization.length - 2] || defaultGithubOrganization;
     var project = projectWithOrganization[projectWithOrganization.length - 1]
 
     var orgProject = organization + '/' + project;
     msg.send('Generating project snapshot for ' + orgProject + '...');
+    msg.send('https://waffle.io/' + orgProject);
     recentClosedIssuesReport(orgProject, function(closedIssuesMessage) {
       msg.send(closedIssuesMessage);
       openPullRequests(orgProject, function(pullRequestsMessage) {
@@ -155,5 +157,5 @@ module.exports = function(robot) {
     });
   };
 
-  robot.respond(/snapshot (\S+)/i, snapshotHandler);
+  robot.respond(/waffle board (\S+)/i, handler);
 };

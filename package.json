@@ -1,14 +1,14 @@
 {
-  "name": "hubot-project-snapshot",
-  "version": "0.4.4",
-  "description": "Hubot plugin for daily progress reports",
+  "name": "hubot-waffle-board",
+  "version": "1.0.0",
+  "description": "Hubot plugin for daily project progress reports",
   "main": "index.js",
   "scripts": {
     "test": "mocha --compilers coffee:coffee-script"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/betterup/hubot-project-snapshot.git"
+    "url": "git://github.com/betterup/hubot-waffle-board.git"
   },
   "keywords": [
     "github",
