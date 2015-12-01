@@ -5,8 +5,11 @@
 > What's my project status? (Done, Doing, New Issues)
 
 ## Example usage:
+
+```
 > Hubot waffle board myproject?
 > Hubot waffle board myorganization/myproject?
+```
 
 ## Installation via NPM
 
