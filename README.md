@@ -1,36 +1,35 @@
-[![Build Status](https://travis-ci.org/betterup/hubot-wip.svg?branch=master)](https://travis-ci.org/betterup/hubot-wip)
+[![Build Status](https://travis-ci.org/betterup/hubot-waffle-board.svg?branch=master)](https://travis-ci.org/betterup/hubot-waffle-board)
 
-# hubot-wip
+# hubot-waffle-board
 
-> What's in progress?
+> What's my project status? (Done, Doing, New Issues)
 
 ## Example usage:
-> Hubot what is in progress for myproject?
-> Hubot what is in progress for myorganization/myproject?
-> Hubot wip myproject
+> Hubot waffle board myproject?
+> Hubot waffle board myorganization/myproject?
 
 ## Installation via NPM
 
 Run the following command to install this module as a Hubot dependency
 
 ```
-npm install hubot-wip --save
+npm install hubot-waffle-board --save
 ```
 
-Confirm that hubot-wip appears as a dependency in your Hubot package.json file.
+Confirm that hubot-waffle-board appears as a dependency in your Hubot package.json file.
 
 ```
 "dependencies": {
   "hubot":              "2.x",
   "hubot-scripts":      "2.x",
-  "hubot-wip": "*"
+  "hubot-waffle-board": "*"
 }
 ```
 
-Add hubot-wip to your external-scripts.json:
+Add hubot-waffle-board to your external-scripts.json:
 
 ```
-["hubot-wip"]
+["hubot-waffle-board"]
 ```
 
 ## Contributing
