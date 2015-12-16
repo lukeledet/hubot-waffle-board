@@ -39,7 +39,7 @@ module.exports = function(robot) {
   // see https://developer.github.com/v3/issues/#list-issues
   function issueToString(issue) {
     var labels = _.reject(issue.labels, function(label) { return label.name == wipLabel });
-    var hashtags = _.map(labels, function(label) { return '#' + label.name; }).sort().join(' ');
+    var hashtags = _.map(labels, function(label) { return '`#' + label.name + '`'; }).sort().join(' ');
     var lastUpdatedAt = moment(issue.closed_at || issue.updated_at);
     var daysSinceUpdated = moment().diff(lastUpdatedAt, 'days');
     var owner = issue.assignee || issue.user;
@@ -62,7 +62,7 @@ module.exports = function(robot) {
       if (issuesWithoutPullRequests.length === 0) {
         callback('No issues currently in progress for ' + orgProject);
       } else {
-        var message = 'These issues are currently in progress for ' + orgProject + ':';
+        var message = '*These issues are currently in progress for ' + orgProject + ':*';
         issuesWithoutPullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
@@ -86,7 +86,7 @@ module.exports = function(robot) {
       if (issuesWithoutPullRequests.length === 0) {
         callback('No recently closed issues for ' + orgProject);
       } else {
-        var message = 'These issues were recently closed for ' + orgProject + ':';
+        var message = '*These issues were recently closed for ' + orgProject + ':*';
         issuesWithoutPullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
@@ -111,7 +111,7 @@ module.exports = function(robot) {
       if (issues.length === 0) {
         callback('No new issues in the inbox for ' + orgProject);
       } else {
-        var message = 'These are new issues in the inbox for ' + orgProject + ':';
+        var message = '*These are new issues in the inbox for ' + orgProject + ':*';
         issues.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
@@ -126,7 +126,7 @@ module.exports = function(robot) {
       if (pullRequests.length === 0) {
         callback('No open pull requests for ' + orgProject);
       } else {
-        var message = 'Open pull requests for ' + orgProject + ':';
+        var message = '*Open pull requests for ' + orgProject + ':*';
         pullRequests.forEach(function(issue) {
           message += "\n* " + issueToString(issue);
         });
